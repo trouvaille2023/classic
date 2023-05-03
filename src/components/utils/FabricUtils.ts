@@ -5,9 +5,6 @@ export class FabricUtils {
 		return new Canvas(dom, {
 			width: 1123,
 			height: 794,
-			fireRightClick: true, // 启用右键，button的数字为3
-			stopContextMenu: false, // 禁止默认右键菜单
-			includeDefaultValues: false, // 指示toObject/toDatalessObject是否应该包含默认值，如果设置为false，则优先于对象值
 		});
 	}
 
@@ -18,7 +15,6 @@ export class FabricUtils {
 			left: 0,
 			top: 50,
 			splitByGrapheme: true, //换行
-
 			...opts,
 		});
 	}
