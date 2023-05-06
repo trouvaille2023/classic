@@ -11,7 +11,7 @@
 			<div class="btn" @click="actionEvent('color')">Red</div>
 		</div>
 		<div class="wrap" id="canvas-box">
-			<canvas ref="canvasRef" id="canvas"></canvas>
+			<div class="c-box"><canvas ref="canvasRef" class="cvs" id="canvas"></canvas></div>
 		</div>
 	</div>
 </template>
@@ -21,49 +21,50 @@ import { FabricUtils } from './utils/FabricUtils';
 import { onMounted, ref } from 'vue';
 import { Canvas, Text } from 'fabric';
 
-const { createITextBox, createCanvas } = new FabricUtils();
-
-let canvas = ref<Canvas>();
+let context = ref();
 onMounted(() => {
-	canvas.value = createCanvas(document.getElementById('canvas') as HTMLCanvasElement) as Canvas;
+	context.value = new FabricUtils(document.getElementById('canvas') as HTMLCanvasElement);
+	actionEvent('iTextBox');
 });
 
 const actionEvent = (type: string) => {
-	if (type && canvas.value) {
+	const ctx = context.value;
+	const app = ctx.app;
+	if (type && ctx) {
 		let activeObject = null;
 		let shape = null;
 		let txt = `白鹤滩-浙江±800千伏特高压直流输电工程(下称白浙线)是全球首个混合级联特高压直流工程，在世界上首次研发“常规直流+柔性直流”的混合级联特高压直流输电技术，集成特高压直流输电大容量、远距离、低损耗，以及柔性直流输电控制灵活、系统支撑能力强的优势，示范引领意义重大。"`;
-
+		txt = txt.repeat(5);
 		switch (type) {
 			case 'iTextBox':
-				shape = createITextBox(canvas.value, txt, { left: 0, top: 100 });
-				canvas.value.add(shape);
-				canvas.value.renderAll();
+				shape = ctx.createITextBox(txt, { left: 0, top: 100 });
+				app.add(shape);
+				app.renderAll();
 				break;
 
 			case 'clearCanvas':
-				canvas.value.clear();
+				app.clear();
 				break;
 			case 'bold':
-				activeObject = canvas.value.getActiveObject() as Text;
+				activeObject = app.getActiveObject() as Text;
 				activeObject?.setSelectionStyles({ fontWeight: 'bold' }, 0);
-				canvas.value.renderAll();
+				app.renderAll();
 				break;
 			case 'italic':
-				activeObject = canvas.value.getActiveObject() as Text;
+				activeObject = app.getActiveObject() as Text;
 				activeObject?.setSelectionStyles({ fontStyle: 'italic' }, 0);
-				canvas.value.renderAll();
+				app.renderAll();
 				break;
 			case 'underline':
-				activeObject = canvas.value.getActiveObject() as Text;
+				activeObject = app.getActiveObject() as Text;
 				activeObject?.setSelectionStyles({ underline: true }, 0);
-				canvas.value.renderAll();
+				app.renderAll();
 				break;
 			case 'color':
-				activeObject = canvas.value.getActiveObject() as Text;
+				activeObject = app.getActiveObject() as Text;
 
 				activeObject?.setSelectionStyles({ fill: 'red' }, 0);
-				canvas.value.renderAll();
+				app.renderAll();
 				break;
 		}
 	}
@@ -72,9 +73,11 @@ const actionEvent = (type: string) => {
 
 <style scoped lang="less">
 .wrap {
-	border: 1px solid #000;
-	width: 1123px;
-	height: 794px;
+	//border: 1px solid #000;
+	//width: 1123px;
+	//height: 794px;
+	display: flex;
+	flex-direction: column;
 }
 .option-wrap {
 	margin-left: 200px;
@@ -106,5 +109,11 @@ const actionEvent = (type: string) => {
 
 .btn:not(:nth-child(1)):not(.btnBorder) {
 	border-left: none;
+}
+</style>
+
+<style>
+.c-box {
+	border: 1px dashed red;
 }
 </style>
